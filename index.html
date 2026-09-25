@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stylenm.com — Stylish Name Generator for Instagram, Free Fire & Gaming</title>
+<meta name="description" content="Free stylish name generator. Create cool, cute, pro & fancy stylish names for Instagram, Free Fire, PUBG, gaming and social media. 500+ fonts, one tap copy.">
+<meta name="keywords" content="stylish name, stylish name generator, free fire stylish name, instagram stylish name, cool name font, fancy name, gaming name">
+<meta name="theme-color" content="#eaf6ff">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://stylenm.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stylenm.com — Stylish Name Generator">
+<meta property="og:description" content="Create 500+ stylish names for Instagram, Free Fire & gaming. One tap copy.">
+<meta property="og:url" content="https://stylenm.com/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-dot"></span><span id="brandName">stylenm.com</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="drawer" id="drawer" hidden>
+    <a href="#about">About Us</a>
+    <a href="#contact">Contact</a>
+    <a href="#privacy">Privacy Policy</a>
+    <a href="#terms">Terms &amp; Conditions</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+
+<!-- ============ CATEGORY BAR ============ -->
+<div class="catbar" id="catbar">
+  <div class="cat-current">
+    <span class="pulse"></span><span id="catCurrent">Instagram</span>
+  </div>
+  <div class="cat-scroll" id="catScroll"></div>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <h1>Stylish Name <span>Generator</span></h1>
+    <p>Type your name below &amp; get 500+ stylish fonts for Instagram, Free Fire, PUBG, Gaming &amp; more. One tap copy.</p>
+  </section>
+
+  <!-- ============ FAVORITES ============ -->
+  <section class="fav-wrap" id="favWrap" hidden>
+    <h2 class="sec-title">⭐ Your Favorites</h2>
+    <div class="style-grid" id="favList"></div>
+  </section>
+
+  <!-- ============ CATEGORY SECTIONS (lazy) ============ -->
+  <div id="sections"></div>
+
+  <!-- ============ FAQ ============ -->
+  <section class="page-block" id="faq">
+    <h2 class="sec-title">❓ Frequently Asked Questions</h2>
+    <div id="faqList" class="faq-list"></div>
+  </section>
+
+  <!-- ============ WHY CHOOSE ============ -->
+  <section class="page-block" id="why">
+    <h2 class="sec-title">💎 Why Choose Stylenm?</h2>
+    <div id="whyList" class="why-grid"></div>
+  </section>
+
+  <!-- ============ TIPS ============ -->
+  <section class="page-block" id="tips">
+    <h2 class="sec-title">💡 Stylish Name Tips</h2>
+    <ul id="tipList" class="tip-list"></ul>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="page-block" id="about">
+    <h2 class="sec-title">📖 What is Stylenm?</h2>
+    <div class="prose" id="aboutText"></div>
+  </section>
+
+  <!-- ============ SHARE ============ -->
+  <section class="page-block" id="share">
+    <h2 class="sec-title">🔗 Share This Page</h2>
+    <div class="share-row" id="shareRow"></div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="page-block" id="contact">
+    <h2 class="sec-title">📬 Contact Us</h2>
+    <div class="prose">
+      <p>Koi bhi sawaal, suggestion ya business enquiry ho to humein likhein:</p>
+      <p><strong>Email:</strong> <a href="mailto:hello@stylenm.com">hello@stylenm.com</a></p>
+      <p>Hum 24–48 hours me reply karte hain.</p>
+    </div>
+  </section>
+
+  <!-- ============ PRIVACY ============ -->
+  <section class="page-block" id="privacy">
+    <h2 class="sec-title">🔒 Privacy Policy</h2>
+    <div class="prose">
+      <p>Stylenm aapki privacy ka pura khayal rakhta hai. Hum koi bhi personal data server par store nahi karte.</p>
+      <p>Aapka naam sirf aapke browser me process hota hai. Favorites list aapke device ke local storage me save hoti hai — kabhi upload nahi hoti.</p>
+      <p>Hum third-party analytics sirf anonymous traffic samajhne ke liye use kar sakte hain.</p>
+    </div>
+  </section>
+
+  <!-- ============ TERMS ============ -->
+  <section class="page-block" id="terms">
+    <h2 class="sec-title">📜 Terms &amp; Conditions</h2>
+    <div class="prose">
+      <p>Stylenm ek free tool hai. Is website ka use karte waqt aap in shartein se sehmat hote hain:</p>
+      <p>1. Is tool se banaye gaye names kisi bhi platform par free me use kar sakte hain.</p>
+      <p>2. Website ko scrape, copy ya redistribute karna mana hai.</p>
+      <p>3. Hum bina notice ke design ya features change kar sakte hain.</p>
+    </div>
+  </section>
+
+  <!-- ============ DISCLAIMER ============ -->
+  <section class="page-block" id="disclaimer">
+    <h2 class="sec-title">⚠️ Disclaimer</h2>
+    <div class="prose">
+      <p>Stylenm kisi bhi brand — Instagram, Free Fire, PUBG, WhatsApp — se affiliated nahi hai. Saare trademarks unke respective owners ke hain.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© <span id="year"></span> <strong>stylenm.com</strong> — All Rights Reserved.</p>
+  <p class="foot-links">
+    <a href="#about">About</a> · <a href="#contact">Contact</a> ·
+    <a href="#privacy">Privacy</a> · <a href="#terms">Terms</a>
+  </p>
+</footer>
+
+<!-- ============ FLOATING BUTTONS ============ -->
+<button class="fab fab-top" id="topBtn" aria-label="Scroll to top">↑</button>
+<button class="fab fab-add" id="addBtn" aria-label="Add your name">✎</button>
+
+<!-- ============ STICKY BOTTOM BAR ============ -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="bb-inner">
+    <label class="bb-input">
+      <span class="bb-icon" aria-hidden="true">✎</span>
+      <input type="text" id="nameInput" placeholder="Enter your name…" maxlength="22"
+             autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Your name">
+      <button type="button" class="bb-clear" id="clearBtn" aria-label="Clear">✕</button>
+    </label>
+    <button type="button" class="bb-btn" id="genBtn">Generate</button>
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>
