@@ -1,6 +1,7 @@
 /* =========================================================
    Stylenm.com — Stylish Name Generator
    Lazy loading • Favorites • Copy • Category tracking
+   Random styles & trending names on every load
    ========================================================= */
 (function () {
   'use strict';
@@ -15,7 +16,8 @@
     expanded: {},        // { categoryId: true }
     trendExpanded: {},   // { categoryId: true }
     activeCategory: null,
-    observer: null
+    observer: null,
+    shuffled: {}         // { categoryId: { styles: [...], trends: [...] } }
   };
 
   const STYLE_PREVIEW = 5;
@@ -26,6 +28,34 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (m) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[m]));
+
+  // Fisher-Yates shuffle
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Shuffle all categories' styles & trending once per page load
+  function shuffleAllCategories() {
+    if (!DATA || !DATA.categories) return;
+    DATA.categories.forEach((cat) => {
+      state.shuffled[cat.id] = {
+        styles: shuffle(cat.styles || []),
+        trends: shuffle(cat.trending || [])
+      };
+    });
+  }
+
+  function getShuffledStyles(cat) {
+    return (state.shuffled[cat.id] && state.shuffled[cat.id].styles) || cat.styles || [];
+  }
+  function getShuffledTrends(cat) {
+    return (state.shuffled[cat.id] && state.shuffled[cat.id].trends) || cat.trending || [];
+  }
 
   function toast(msg) {
     let el = $('.toast');
@@ -170,8 +200,8 @@
       sec.id = 'cat-' + cat.id;
       sec.dataset.cat = cat.id;
 
-      const styles = cat.styles;
-      const trends = cat.trending || [];
+      const styles = getShuffledStyles(cat);
+      const trends = getShuffledTrends(cat);
 
       const isExpanded = !!state.expanded[cat.id];
       const shownStyles = isExpanded ? styles : styles.slice(0, STYLE_PREVIEW);
@@ -188,7 +218,8 @@
       // Style grid
       html += '<div class="style-grid">';
       shownStyles.forEach((style) => {
-        const idx = styles.indexOf(style);
+        // Important: original index use karo taaki favorites consistent rahein
+        const idx = cat.styles.indexOf(style);
         const id = favId(cat.id, idx);
         const isFav = state.favorites.has(id);
         const text = applyName(style, state.name);
@@ -302,6 +333,8 @@
         if (e.key === 'Enter') {
           e.preventDefault();
           state.name = input.value;
+          // ✅ Shuffle again so naya set aaye
+          shuffleAllCategories();
           refreshAllStyles();
           toast('✨ Name generated!');
         }
@@ -320,6 +353,8 @@
     if (genBtn) {
       genBtn.addEventListener('click', () => {
         state.name = input ? input.value : '';
+        // ✅ Shuffle again so naya set aaye
+        shuffleAllCategories();
         refreshAllStyles();
         toast(state.name ? '✨ Name generated!' : 'Type a name first');
       });
@@ -377,6 +412,16 @@
           if (k !== catId) state.expanded[k] = false;
         });
         state.expanded[catId] = !state.expanded[catId];
+        // ✅ Jab "See Less" pe click ho, to naya shuffle karo
+        if (!state.expanded[catId]) {
+          const cat = DATA.categories.find((c) => c.id === catId);
+          if (cat) {
+            state.shuffled[catId] = {
+              styles: shuffle(cat.styles || []),
+              trends: state.shuffled[catId] ? state.shuffled[catId].trends : shuffle(cat.trending || [])
+            };
+          }
+        }
         renderCategorySections();
         const el = document.getElementById('cat-' + catId);
         if (el) {
@@ -555,6 +600,7 @@
     }
 
     loadFavs();
+    shuffleAllCategories();   // ✅ Pehli baar shuffle
     renderCategoryChips();
     renderCategorySections();
     renderStaticSections();
