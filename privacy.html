@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy — Stylenm.com</title>
+<meta name="description" content="Read Stylenm's privacy policy. Learn how we handle your data.">
+<meta name="theme-color" content="#eaf6ff">
+<link rel="canonical" href="https://stylenm.com/privacy.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-body">
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span><span id="brandName">stylenm.com</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="drawer" id="drawer" hidden>
+    <a href="about.html">About Us</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+    <a href="index.html#faq">FAQ</a>
+  </nav>
+</header>
+
+<main class="page-wrap">
+  <a class="back-link" href="index.html">← Back to Home</a>
+
+  <h1 class="page-title">Privacy Policy</h1>
+  <p class="page-sub">Last updated: <span id="updYear"></span></p>
+
+  <div class="prose page-prose">
+    <h2>1. Introduction</h2>
+    <p>At Stylenm, we take your privacy seriously. This policy explains what data we collect, how we use it, and your rights.</p>
+
+    <h2>2. Data We Don't Collect</h2>
+    <p>We do <strong>not</strong> collect or store:</p>
+    <ul class="prose-list">
+      <li>Your name (it's processed only in your browser)</li>
+      <li>Your favorites (saved in your device's local storage)</li>
+      <li>Your IP address or personal details</li>
+      <li>Any login credentials (we have no accounts)</li>
+    </ul>
+
+    <h2>3. Local Storage</h2>
+    <p>Your favorites list is stored in your browser's local storage. It never leaves your device. Clearing browser data will erase it.</p>
+
+    <h2>4. Cookies &amp; Analytics</h2>
+    <p>We may use anonymous analytics (such as page views) to improve the website. No personally identifiable information is captured.</p>
+
+    <h2>5. Third-Party Links</h2>
+    <p>Our share buttons link to external platforms (Facebook, WhatsApp, X). We are not responsible for their privacy practices. Please review their policies separately.</p>
+
+    <h2>6. Children's Privacy</h2>
+    <p>Stylenm is not directed at children under 13. We do not knowingly collect any data from children.</p>
+
+    <h2>7. Changes to This Policy</h2>
+    <p>We may update this policy occasionally. Changes will be posted on this page with a new "Last updated" date.</p>
+
+    <h2>8. Contact</h2>
+    <p>Questions about privacy? Email <a href="mailto:hello@stylenm.com">hello@stylenm.com</a>.</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <p>© <span id="year"></span> <strong>stylenm.com</strong> — All Rights Reserved.</p>
+  <p class="foot-links">
+    <a href="about.html">About</a> · <a href="contact.html">Contact</a> ·
+    <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+  </p>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('updYear').textContent = new Date().getFullYear();
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  menuBtn.addEventListener('click', () => {
+    const open = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!open));
+    drawer.hidden = open;
+  });
+</script>
+</body>
+</html>
