@@ -1,6 +1,7 @@
 /* =========================================================
    Stylenm.com — Stylish Name Generator
    Lazy loading • Favorites • Copy • Category tracking
+   Random styles & trending names on every load
    ========================================================= */
 (function () {
   'use strict';
@@ -15,7 +16,8 @@
     expanded: {},        // { categoryId: true }
     trendExpanded: {},   // { categoryId: true }
     activeCategory: null,
-    observer: null
+    observer: null,
+    shuffled: {}         // { categoryId: { styles: [...], trends: [...] } }
   };
 
   const STYLE_PREVIEW = 5;
@@ -26,6 +28,34 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (m) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[m]));
+
+  // Fisher-Yates shuffle
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Shuffle all categories' styles & trending once per page load
+  function shuffleAllCategories() {
+    if (!DATA || !DATA.categories) return;
+    DATA.categories.forEach((cat) => {
+      state.shuffled[cat.id] = {
+        styles: shuffle(cat.styles || []),
+        trends: shuffle(cat.trending || [])
+      };
+    });
+  }
+
+  function getShuffledStyles(cat) {
+    return (state.shuffled[cat.id] && state.shuffled[cat.id].styles) || cat.styles || [];
+  }
+  function getShuffledTrends(cat) {
+    return (state.shuffled[cat.id] && state.shuffled[cat.id].trends) || cat.trending || [];
+  }
 
   function toast(msg) {
     let el = $('.toast');
@@ -57,50 +87,17 @@
     });
   }
 
-  /* ---------- NAME MAPPING (font transformer) ---------- */
-  // data.js me har style ka `map` object hota hai:
-  // { placeholder:"Name", up:{A:"...",B:"..."}, low:{a:"...",b:"..."} }
-
-  function transformName(template, map, name) {
-    const hasName = name && name.trim().length > 0;
-    const finalName = hasName ? name.trim() : null;
-
-    // Placeholder text nikalo — jaise "Name", "NAME", "𝑁𝑎𝑚𝑒", "𐌽𐌰𐌼𐌴"
-    // Sabse simple: har character ko map se replace karo jab naam diya ho.
-    // Jab naam na ho, original template placeholder waisa hi dikhao.
-
-    if (!hasName) return template;
-
-    // Template me jo bhi letters hain unhe map karo.
-    // Placeholder words "Name"/"NAME" ko detect karke actual name se replace karo
-    // Lekin tricky hai. Isliye hum placeholder string ko dhundh ke usse replace karenge.
-    // data.js me har style me `ph` field hoga — exact placeholder text.
-
-    return template.split('').map((ch) => {
-      const up = map.up && map.up[ch];
-      const low = map.low && map.low[ch];
-      if (up) return up;
-      if (low) return low;
-      // Space & symbols waisa hi
-      return ch;
-    }).join('');
-  }
-
-  // Naya simpler approach: data.js me har style me `apply(name)` function nahi,
-  // balki `ph` (placeholder) diya hai. Hum ph ko dhundh ke replace karte hain
-  // aur sirf name ke letters ko map karte hain.
-
+  /* ---------- NAME TRANSFORMER ---------- */
   function applyName(style, name) {
     const hasName = name && name.trim().length > 0;
     const nm = hasName ? name.trim() : '';
     const out = [];
     let i = 0;
-    const ph = style.ph; // placeholder jaise "Name"
+    const ph = style.ph;
     const tpl = style.tpl;
 
     while (i < tpl.length) {
       if (tpl.startsWith(ph, i)) {
-        // Placeholder mila — isko name se replace karo
         if (!hasName) {
           out.push(ph);
         } else {
@@ -203,8 +200,8 @@
       sec.id = 'cat-' + cat.id;
       sec.dataset.cat = cat.id;
 
-      const styles = cat.styles;
-      const trends = cat.trending || [];
+      const styles = getShuffledStyles(cat);
+      const trends = getShuffledTrends(cat);
 
       const isExpanded = !!state.expanded[cat.id];
       const shownStyles = isExpanded ? styles : styles.slice(0, STYLE_PREVIEW);
@@ -221,7 +218,8 @@
       // Style grid
       html += '<div class="style-grid">';
       shownStyles.forEach((style) => {
-        const idx = styles.indexOf(style);
+        // Important: original index use karo taaki favorites consistent rahein
+        const idx = cat.styles.indexOf(style);
         const id = favId(cat.id, idx);
         const isFav = state.favorites.has(id);
         const text = applyName(style, state.name);
@@ -293,7 +291,6 @@
 
   /* ---------- UPDATE all visible style texts ---------- */
   function refreshAllStyles() {
-    // Simply re-render sections & favorites — simplest & safe.
     renderCategorySections();
     renderFavorites();
   }
@@ -336,6 +333,8 @@
         if (e.key === 'Enter') {
           e.preventDefault();
           state.name = input.value;
+          // ✅ Shuffle again so naya set aaye
+          shuffleAllCategories();
           refreshAllStyles();
           toast('✨ Name generated!');
         }
@@ -354,6 +353,8 @@
     if (genBtn) {
       genBtn.addEventListener('click', () => {
         state.name = input ? input.value : '';
+        // ✅ Shuffle again so naya set aaye
+        shuffleAllCategories();
         refreshAllStyles();
         toast(state.name ? '✨ Name generated!' : 'Type a name first');
       });
@@ -376,7 +377,7 @@
       });
     }
 
-    // Global click delegation for copy, fav, more
+    // Global click delegation
     document.addEventListener('click', (e) => {
       // Copy
       const copyBtn = e.target.closest('[data-copy]');
@@ -407,13 +408,21 @@
       const moreBtn = e.target.closest('[data-more]');
       if (moreBtn) {
         const catId = moreBtn.getAttribute('data-more');
-        // Auto-collapse all other expanded categories
         Object.keys(state.expanded).forEach((k) => {
           if (k !== catId) state.expanded[k] = false;
         });
         state.expanded[catId] = !state.expanded[catId];
+        // ✅ Jab "See Less" pe click ho, to naya shuffle karo
+        if (!state.expanded[catId]) {
+          const cat = DATA.categories.find((c) => c.id === catId);
+          if (cat) {
+            state.shuffled[catId] = {
+              styles: shuffle(cat.styles || []),
+              trends: state.shuffled[catId] ? state.shuffled[catId].trends : shuffle(cat.trending || [])
+            };
+          }
+        }
         renderCategorySections();
-        // Re-scroll to that category so user doesn't lose place
         const el = document.getElementById('cat-' + catId);
         if (el) {
           const top = el.getBoundingClientRect().top + window.scrollY - 120;
@@ -470,7 +479,6 @@
         const el = entry.target;
         const catId = el.dataset.cat;
 
-        // Mark active category in sticky bar
         if (catId && state.activeCategory !== catId) {
           state.activeCategory = catId;
           const cat = DATA.categories.find((c) => c.id === catId);
@@ -481,7 +489,6 @@
             chip.classList.toggle('active', chip.dataset.cat === catId);
           });
 
-          // Auto-scroll the chip into view
           const activeChip = $('.cat-chip.active');
           const bar = $('#catScroll');
           if (activeChip && bar) {
@@ -495,17 +502,15 @@
     sections.forEach((s) => state.observer.observe(s));
   }
 
-  /* ---------- FAQ / WHY / TIPS / ABOUT / SHARE ---------- */
+  /* ---------- STATIC SECTIONS ---------- */
   function renderStaticSections() {
     const cfg = DATA.site || {};
 
-    // Brand
     if (cfg.brand) {
       const b = $('#brandName');
       if (b) b.textContent = cfg.brand;
     }
 
-    // Year
     const y = $('#year');
     if (y) y.textContent = new Date().getFullYear();
 
@@ -532,7 +537,6 @@
         if (!q) return;
         const item = q.parentElement;
         const wasOpen = item.classList.contains('open');
-        // Close all others
         $$('.faq-item').forEach((el) => el.classList.remove('open'));
         if (!wasOpen) item.classList.add('open');
       });
@@ -596,6 +600,7 @@
     }
 
     loadFavs();
+    shuffleAllCategories();   // ✅ Pehli baar shuffle
     renderCategoryChips();
     renderCategorySections();
     renderStaticSections();
@@ -603,7 +608,6 @@
     bindEvents();
     setupLazyLoad();
 
-    // Set default name if any (empty by default)
     const input = $('#nameInput');
     if (input && state.name) input.value = state.name;
   }
